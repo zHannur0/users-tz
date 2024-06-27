@@ -28,7 +28,7 @@ export default function UserModal({setShowModal, user}) {
                                             );
                                         }) :
                                             <div>
-                                                User don's have answers
+                                                User do not have answers
                                             </div>
                                         }
                                     </div>

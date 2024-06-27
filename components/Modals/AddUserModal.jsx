@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 
 export default function AddUserModal({ setShowUserModal }) {
     const [formData, setFormData] = useState({
@@ -24,24 +25,21 @@ export default function AddUserModal({ setShowUserModal }) {
             return;
         }
 
-        const response = await fetch('/api/auth/signup', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
+        try {
+            const response = await axios.post('/api/users', {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
-            }),
-        });
+            });
 
-        if (response.ok) {
-            alert('User created successfully');
-            setShowUserModal(false);
-        } else {
-            const errorData = await response.json();
-            alert(errorData.message || 'Something went wrong');
+            if (response.status === 201) {
+                alert('User created successfully');
+                setShowUserModal(false);
+            } else {
+                alert('Something went wrong');
+            }
+        } catch (error) {
+            alert(error.response?.data?.message || 'Something went wrong');
         }
     };
 
