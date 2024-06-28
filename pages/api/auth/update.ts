@@ -2,8 +2,9 @@ import bcryptjs from 'bcryptjs';
 import User from '../../../models/User';
 import db from '../../../utils/db';
 import { getToken } from 'next-auth/jwt';
+import {NextApiRequest, NextApiResponse} from "next";
 
-async function handler(req, res) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'PUT') {
     return res.status(400).send({ message: `${req.method} not supported` });
   }

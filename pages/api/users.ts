@@ -1,7 +1,8 @@
 import User from '../../models/User';
 import db from '../../utils/db';
+import {NextApiRequest, NextApiResponse} from "next";
 
-export default async function handler(req, res) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     await db.connect();
     try {
         const users = await User.find({});

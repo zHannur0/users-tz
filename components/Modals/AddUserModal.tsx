@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 
-export default function AddUserModal({ setShowUserModal }) {
-    const [formData, setFormData] = useState({
+interface AddUserModalProps {
+    setShowUserModal: any;
+}
+
+interface FormData {
+    name: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
+}
+
+const AddUserModal: React.FC<AddUserModalProps> = ({ setShowUserModal }) => {
+    const [formData, setFormData] = useState<FormData>({
         name: '',
         email: '',
         password: '',
         confirmPassword: '',
     });
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({
             ...prevData,
@@ -17,7 +28,7 @@ export default function AddUserModal({ setShowUserModal }) {
         }));
     };
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         if (formData.password !== formData.confirmPassword) {
@@ -38,7 +49,7 @@ export default function AddUserModal({ setShowUserModal }) {
             } else {
                 alert('Something went wrong');
             }
-        } catch (error) {
+        } catch (error: any) {
             alert(error.response?.data?.message || 'Something went wrong');
         }
     };
@@ -119,3 +130,5 @@ export default function AddUserModal({ setShowUserModal }) {
         </div>
     );
 }
+
+export default AddUserModal;

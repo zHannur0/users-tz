@@ -34,7 +34,7 @@ no need to update Script and Font. we don't use them in the project
 
 2. replace getSession with getToken
 
-   for example in pages/api/auth/update.js
+   for example in pages/api/auth/update.ts
 
    ```js
    import { getToken } from 'next-auth/jwt'

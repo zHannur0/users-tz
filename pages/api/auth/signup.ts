@@ -1,18 +1,25 @@
+import { NextApiRequest, NextApiResponse } from 'next';
 import bcryptjs from 'bcryptjs';
 import User from '../../../models/User';
 import db from '../../../utils/db';
 
-async function handler(req, res) {
+async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     return;
   }
-  const { name, email, password } = req.body;
+
+  const { name, email, password } = req.body as {
+    name: string;
+    email: string;
+    password: string;
+  };
+
   if (
-    !name ||
-    !email ||
-    !email.includes('@') ||
-    !password ||
-    password.trim().length < 5
+      !name ||
+      !email ||
+      !email.includes('@') ||
+      !password ||
+      password.trim().length < 5
   ) {
     res.status(422).json({
       message: 'Validation error',
@@ -22,7 +29,7 @@ async function handler(req, res) {
 
   await db.connect();
 
-  const existingUser = await User.findOne({ email: email });
+  const existingUser = await User.findOne({ email });
   if (existingUser) {
     res.status(422).json({ message: 'User exists already!' });
     await db.disconnect();

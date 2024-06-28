@@ -1,8 +1,12 @@
-import mongoose from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 
-const connection = {};
+interface ConnectionType {
+  isConnected?: number;
+}
 
-async function connect() {
+const connection: ConnectionType = {};
+
+async function connect(): Promise<void> {
   if (connection.isConnected) {
     console.log('already connected');
     return;
@@ -16,24 +20,33 @@ async function connect() {
     await mongoose.disconnect();
   }
 
-  const db = await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI);
+  const db = await mongoose.connect(process.env.NEXT_PUBLIC_MONGODB_URI as string, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  } as mongoose.ConnectOptions);
 
   console.log('new connection');
-  
+
   connection.isConnected = db.connections[0].readyState;
 }
 
-async function disconnect() {
+async function disconnect(): Promise<void> {
   if (connection.isConnected) {
     if (process.env.NODE_ENV === 'production') {
-      //await mongoose.disconnect();
-      //connection.isConnected = false;
     } else {
       console.log('not disconnected');
     }
   }
 }
-function convertDocToObj(doc) {
+
+interface DocType {
+  _id: string;
+  createdAt: string;
+  updatedAt: string;
+  [key: string]: any;
+}
+
+function convertDocToObj(doc: any): DocType {
   doc._id = doc._id.toString();
   doc.createdAt = doc.createdAt.toString();
   doc.updatedAt = doc.updatedAt.toString();

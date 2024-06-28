@@ -3,22 +3,33 @@ import axios from 'axios';
 import UserModal from "./Modals/UserModal";
 import AddUserModal from "./Modals/AddUserModal";
 
-const UsersTable = () => {
-    const [users, setUsers] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [showUserModal, setShowUserModal] = useState(false);
+interface User {
+    _id: string;
+    name: string;
+    email: string;
+    photoProfile: string;
+    createdAt: string;
+}
 
-    const [currUser, setCurrUser] = useState(null);
+const UsersTable = () => {
+    const [users, setUsers] = useState<User[]>([]);
+    const [originalUsers, setOriginalUsers] = useState<User[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const [showModal, setShowModal] = useState<boolean>(false);
+    const [showUserModal, setShowUserModal] = useState<boolean>(false);
+    const [currUser, setCurrUser] = useState<User | null>(null);
+    const [sortingOrder, setSortingOrder] = useState<number>(0);
+
 
     useEffect(() => {
         const fetchUsers = async () => {
             try {
                 const res = await axios.get('/api/users');
                 setUsers(res.data.users);
+                setOriginalUsers(res.data.users);
             } catch (err) {
-                setError(err.message);
+                setError((err as Error).message);
             } finally {
                 setLoading(false);
             }
@@ -27,13 +38,28 @@ const UsersTable = () => {
     }, []);
 
     const sortByName = () => {
-        const sortedUsers = [...users].sort((a, b) =>
-                 a.name.localeCompare(b.name)
-        );
-        setUsers(sortedUsers);
+        if (sortingOrder === 0) {
+            const sortedUsers = [...users].sort((a, b) =>
+                a.name.localeCompare(b.name)
+            );
+            setUsers(sortedUsers);
+            setSortingOrder(1);
+
+        } else if(sortingOrder === 1) {
+            const sortedUsers = [...users].sort((a, b) =>
+                b.name.localeCompare(a.name)
+            );
+            setUsers(sortedUsers);
+            setSortingOrder(2);
+
+        } else {
+            setUsers(originalUsers);
+            setSortingOrder(0);
+        }
+
     };
 
-    const showUser = (user) => {
+    const showUser = (user: User) => {
         setCurrUser(user);
         setShowModal(true);
     }
